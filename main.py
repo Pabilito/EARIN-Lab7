@@ -17,10 +17,17 @@ def Y_X(x_old):
     if x_old == 0: #previous x was 0 (patient did not have cancer)
         #P(Y=1|X=0) = (P(X=0|Y=1) * P(Y=1)) / P(X=0)
         #P(Y=1|X=0) = (0.15 * P(Y=1)) / 0.99
-        return Bernoulli()
+        #P(Y=0|X=0) = (0.95 * P(Y=0)) / 0.01
+        #P(Y=0) = 1 - P(Y=1)
+        #P(Y=0|X=0) = (0.95 * [1 - P(Y=1)]) / 0.01
+        #[(0.95 * [1 - P(Y=1)]) / 0.01] + [(0.15 * P(Y=1)) / 0.99] = 1
+        #P(Y=1) = 0.99      P(Y=0) = 0.01
+        #P(Y=1|X=0) = (0.15 * 0.94) / 0.99 = 0.14
+        return Bernoulli(0.14)
     else:
         #P(Y=1|X=1) = (P(X=1|Y=1) * P(Y=1)) / P(X=1)
         #P(Y=1|X=1) = (0.95 * P(Y=1)) / 0.01
+        #P(Y=1|X=1) = (0.95 * 0.99) / 0.01 = 89.3 XDDDDDDDDDDDDDDD
         return Bernoulli()
 
 
