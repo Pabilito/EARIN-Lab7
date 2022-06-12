@@ -13,8 +13,8 @@ class State:
     def update(self):
         self.counter += 1
 
-def getProbabilityOfY(probability_X, state_F_F, state_T_F):
-    probability_y_true = (state_F_F.probability + state_T_F.probability) * probability_X
+def getProbabilityOfY(probability_X, state_T_T, state_T_F):
+    probability_y_true = state_T_T.probability  * probability_X + state_T_F.probability * (1-probability_X)
     return probability_y_true
 
 def getInitialStates():
@@ -62,69 +62,16 @@ def randomWalk(states, current_state, p_y):
 
 def main(k):
     states = createListOfStates()
-    probability_of_y = getProbabilityOfY(0.95, states[2], states[3])
+    probability_of_y = getProbabilityOfY(0.05, states[0], states[1])
     current_state = drawRandomState(states, probability_of_y)
     current_state.update()
-    for i in range(k):
+    for _ in range(k):
         current_state = randomWalk(states, current_state, probability_of_y)
 
-    suma = 0
     for s in states:
-        print("Stan:", s.Y, s.X, " the counter: ", s.counter)
-        suma += s.counter
-    print("Stan:", s.Y, s.X, " the probability: ", s.counter / suma)
-'''    
-    
+        print("State (Test, Cancer):", s.Y, s.X, "the counter: ", s.counter)
 
+    for s in states:
+        print("State (Test, Cancer):", s.Y, s.X, "the probability: ", round(s.counter / (k+1), 5))
 
-
-def XonConditionY(y_old):
-    if y_old == 0: #previous y was 0 (test was negative)
-        return bernoulli(0.05) #Probability of cancer is 0.05
-    else:
-        return bernoulli(0.85) #Probability of cancer is 0.85
-
-def YonConditionX(x_old):
-    # P(Y|X) = (P(X|Y))*P(Y))/P(X)
-    # AND
-    # P(0|X) + P(1|X) = 1
-    if x_old == 0: #previous X was 0 (patient did not have cancer)
-        # 😥 = to fill with real value
-        #P(Y=1|X=0) = (P(X=0|Y=1) * P(Y=1)) / P(X=0)
-        #P(Y=1|X=0) = (0.10 * P(Y=1)) / 0.95
-        #P(Y=0|X=0) = (0.80 * P(Y=0)) / 0.95
-        #P(Y=0) = 1 - P(Y=1)
-        #P(Y=0|X=0) = (0.80 * [1 - P(Y=1)]) / 0.95
-        #[(0.80 * [1 - P(Y=1)]) / 0.95] + [(0.10 * P(Y=1)) / 0.95] = 1
-        #(16/19) * [1 - P(Y=1)] + (2/19) * P(Y=1) = 1
-        #(16/19) - 14/19 P(Y=1) = 1
-        # 
-        #P(Y=1) = -0.04      P(Y=0) = 1.04  Nie mam pytań
-        #P(Y=1|X=0) = (0.15 * 😥 ) / 0.99 = 😥
-        return bernoulli(😥)
-    else:
-        #P(Y=1|X=1) = (P(X=1|Y=1) * P(Y=1)) / P(X=1)
-        #P(Y=1|X=1) = (0.85 * P(Y=1)) / 0.01
-        #P(Y=0|X=1) = (0.05 * P(Y=0)) / 0.01
-        #[(0.05 * [1-P(Y=1)]) / 0.01] + [(0.85 * P(Y=1)) / 0.01] = 1
-        #P(Y=1) = -0.05 
-        return bernoulli(😥)
-
-
-def GibbsSampling(old_state, mixture, stepsize):
-    
-    # x is cancer; y is test
-    # Values swapped to make sense
-    # P(X=1|Y=1) = 0.90
-    # P(X=1|Y=0) = 0.20
-    # P(X=0|Y=1) = 0.10
-    # P(X=0|Y=0) = 0.80
-    # P(X=0) = 0.95
-    # P(X=1) = 0.05
-
-    x_old, y_old = old_state
-    x_old = np.array([x_old])
-
-    # Draw new x conditioned on y
-    x_new = XonConditionY(x_old)
-'''
+main(10000)
